@@ -1,0 +1,26 @@
+package com.ImmunTrackApp.ImmunTrackApp.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "vaccines")
+public class VaccineEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String vaccineName;
+    private String manufacturer;
+    private String batchNo;
+    private LocalDate expiryDate;
+    private String quantity;
+}

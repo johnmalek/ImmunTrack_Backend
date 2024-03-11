@@ -1,0 +1,13 @@
+package com.ImmunTrackApp.ImmunTrackApp;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class ImmunTrackAppApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
