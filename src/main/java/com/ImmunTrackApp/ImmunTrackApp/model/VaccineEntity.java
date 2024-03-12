@@ -21,6 +21,6 @@ public class VaccineEntity {
     private String vaccineName;
     private String manufacturer;
     private String batchNo;
-    private LocalDate expiryDate;
+    private String expiryDate;
     private String quantity;
 }

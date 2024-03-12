@@ -27,5 +27,5 @@ public class ChildEntity {
     private String mother_id_no;
     private String mother_phone_no;
     private String location;
-    private LocalDate dob;
+    private String dob;
 }

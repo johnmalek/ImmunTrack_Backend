@@ -16,16 +16,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Response> register(@RequestBody UserRegister userRegisterDto){
-        return userService.userRegister(userRegisterDto);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLogin userLoginDto){
-        return userService.userLogin(userLoginDto);
-    }
-
     @PostMapping("/add_child")
     public ResponseEntity<Response> addChild(
             Principal principal,
