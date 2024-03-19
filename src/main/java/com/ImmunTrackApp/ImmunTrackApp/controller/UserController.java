@@ -4,6 +4,7 @@ import com.ImmunTrackApp.ImmunTrackApp.dto.*;
 import com.ImmunTrackApp.ImmunTrackApp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -48,9 +49,19 @@ public class UserController {
         return userService.getAllChildren();
     }
 
+    @GetMapping("/children_count")
+    public ResponseEntity<Numbers> childrenCount(){
+        return userService.childrenCount();
+    }
+
     @GetMapping("/all_vaccines")
     public ResponseEntity<VaccineInfoResponse> getAllVaccines(){
         return userService.getAllVaccines();
+    }
+
+    @GetMapping("/vaccine_count")
+    public ResponseEntity<Numbers> vaccineCount(){
+        return userService.vaccineCount();
     }
 
     @PutMapping("/update_child_info/{child_id}")

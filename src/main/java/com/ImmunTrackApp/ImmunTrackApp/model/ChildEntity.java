@@ -8,7 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -28,4 +30,7 @@ public class ChildEntity {
     private String mother_phone_no;
     private String location;
     private String dob;
+
+    @OneToMany(mappedBy = "child")
+    private List<ImmunizationSchedule> immunizationSchedules = new ArrayList<>();
 }

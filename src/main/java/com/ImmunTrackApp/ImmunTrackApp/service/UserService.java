@@ -7,30 +7,20 @@ import com.ImmunTrackApp.ImmunTrackApp.repository.TokenRepo;
 import com.ImmunTrackApp.ImmunTrackApp.repository.UserRepo;
 import com.ImmunTrackApp.ImmunTrackApp.repository.VaccineRepo;
 import com.ImmunTrackApp.ImmunTrackApp.security.JwtService;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.engine.spi.Resolution;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestPart;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -49,7 +39,7 @@ public class UserService {
         Response response = new Response();
         if(userRepo.existsByEmail(userRegisterDto.getEmail())){
             response.setSuccess(false);
-            response.setMessage("User already exists");
+            response.setMessage("User already exists, login instead");
             return new ResponseEntity<Response>(response, HttpStatus.BAD_REQUEST);
         }
         UserEntity healthWorker = new UserEntity();
@@ -60,7 +50,7 @@ public class UserService {
         healthWorker.setRole(Role.HEALTHCARE);
         userRepo.save(healthWorker);
         response.setSuccess(true);
-        response.setMessage("Health worker Created Successfully");
+        response.setMessage("User Created Successfully");
         return new ResponseEntity<Response>(response, HttpStatus.OK);
     }
 
@@ -200,6 +190,36 @@ public class UserService {
         return ResponseEntity.badRequest().body(childInfoResponse);
     }
 
+    // RETURN NUMBER OF CHILDREN
+    public ResponseEntity<Numbers> childrenCount(){
+        Numbers response = new Numbers();
+        if(childRepo.findAll().isEmpty()){
+            response.setSuccess(String.valueOf(false));
+            response.setMessage("No children found");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        long children_count = childRepo.count();
+        response.setSuccess(String.valueOf(true));
+        response.setMessage("Children found");
+        response.setNum(children_count);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // RETURN NUMBER OF VACCINES
+    public ResponseEntity<Numbers> vaccineCount() {
+        Numbers response = new Numbers();
+        if(vaccineRepo.findAll().isEmpty()){
+            response.setSuccess(String.valueOf(false));
+            response.setMessage("No vaccines found");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        long vaccine_count = vaccineRepo.count();
+        response.setSuccess(String.valueOf(true));
+        response.setMessage("Vaccines found");
+        response.setNum(vaccine_count);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     //GET ALL VACCINES
     public ResponseEntity<VaccineInfoResponse> getAllVaccines(){
         ArrayList<VaccineEntity> vaccines = new ArrayList<>(vaccineRepo.findAll());
@@ -298,4 +318,6 @@ public class UserService {
         });
         tokenRepo.saveAll(validUserTokens);
     }
+
+
 }

@@ -27,8 +27,7 @@ public class UserLoginResponse {
     private String token;
     private userDetails user;
 
-    public void setUser(Integer id, String firstname, String email, String lastname) {
+    public void setUser(Integer id, String firstname, String lastname, String email) {
         this.user = new userDetails(firstname, lastname, email, id);
     }
-
 }
