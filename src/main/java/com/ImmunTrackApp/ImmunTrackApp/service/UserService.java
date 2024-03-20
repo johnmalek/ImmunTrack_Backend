@@ -2,10 +2,7 @@ package com.ImmunTrackApp.ImmunTrackApp.service;
 
 import com.ImmunTrackApp.ImmunTrackApp.dto.*;
 import com.ImmunTrackApp.ImmunTrackApp.model.*;
-import com.ImmunTrackApp.ImmunTrackApp.repository.ChildRepo;
-import com.ImmunTrackApp.ImmunTrackApp.repository.TokenRepo;
-import com.ImmunTrackApp.ImmunTrackApp.repository.UserRepo;
-import com.ImmunTrackApp.ImmunTrackApp.repository.VaccineRepo;
+import com.ImmunTrackApp.ImmunTrackApp.repository.*;
 import com.ImmunTrackApp.ImmunTrackApp.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -33,6 +31,7 @@ public class UserService {
     private final TokenRepo tokenRepo;
     private final ChildRepo childRepo;
     private final VaccineRepo vaccineRepo;
+    private final ReportsRepo reportsRepo;
 
     //REGISTER AS A USER
     public ResponseEntity<Response> userRegister(UserRegister userRegisterDto){
@@ -293,6 +292,53 @@ public class UserService {
 
         response.setSuccess(true);
         response.setMessage("Vaccine details updated successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // ADD REPORT
+    public ResponseEntity<Response> addReport(
+            Principal principal,
+            @RequestPart("child_name") String child_name,
+            @RequestPart("vaccine_administered") String vaccine_administered,
+            @RequestPart("date_administered") String date_administered,
+            @RequestPart("next_dose_date") String next_dose_date,
+            @RequestPart("remarks") String remarks
+    ){
+        Response response = new Response();
+
+        String username = principal.getName();
+
+        UserEntity user = (UserEntity) userRepo.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User email "+ username + "mot found"));
+
+        Reports report = new Reports();
+        report.setChild_name(child_name);
+        report.setVaccine_administered(vaccine_administered);
+        report.setDate_administered(date_administered);
+        report.setNext_dose_date(next_dose_date);
+        report.setUser(user);
+        report.setCompiled_by(user.getLastname());
+        report.setRemarks(remarks);
+
+        reportsRepo.save(report);
+
+        response.setSuccess(true);
+        response.setMessage("Report added successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // RETURN NUMBER OF Reports
+    public ResponseEntity<Numbers> reportCount() {
+        Numbers response = new Numbers();
+        if(reportsRepo.findAll().isEmpty()){
+            response.setSuccess(String.valueOf(false));
+            response.setMessage("No reports found");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        long report_count = reportsRepo.count();
+        response.setSuccess(String.valueOf(true));
+        response.setMessage("Reports found");
+        response.setNum(report_count);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

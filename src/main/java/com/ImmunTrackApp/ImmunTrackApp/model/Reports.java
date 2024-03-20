@@ -18,8 +18,12 @@ public class Reports {
     private Integer id;
     private String child_name;
     private String vaccine_administered;
-    private Date date_administered;
-    private Date next_dose_date;
+    private String date_administered;
+    private String next_dose_date;
     private String compiled_by;
     private String remarks;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }

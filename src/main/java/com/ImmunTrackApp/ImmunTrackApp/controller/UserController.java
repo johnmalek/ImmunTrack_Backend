@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/health_care")
@@ -62,6 +63,23 @@ public class UserController {
     @GetMapping("/vaccine_count")
     public ResponseEntity<Numbers> vaccineCount(){
         return userService.vaccineCount();
+    }
+
+    @GetMapping("/report_count")
+    public ResponseEntity<Numbers> reportCount(){
+        return userService.reportCount();
+    }
+
+    @PostMapping("/add_report")
+    public ResponseEntity<Response> addReport(
+            Principal principal,
+            @RequestPart("child_name") String child_name,
+            @RequestPart("vaccine_administered") String vaccine_administered,
+            @RequestPart("date_administered") String date_administered,
+            @RequestPart("next_dose_date") String next_dose_date,
+            @RequestPart("remarks") String remarks,
+            @RequestHeader(name = "Authorization") String token){
+        return userService.addReport(principal, child_name, vaccine_administered, date_administered, next_dose_date, remarks);
     }
 
     @PutMapping("/update_child_info/{child_id}")
