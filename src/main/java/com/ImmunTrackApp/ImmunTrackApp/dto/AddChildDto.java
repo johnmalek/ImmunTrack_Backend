@@ -19,5 +19,5 @@ public class AddChildDto {
     private String mother_id_no;
     private String mother_phone_no;
     private String location;
-    private Date dob;
+    private String dob;
 }

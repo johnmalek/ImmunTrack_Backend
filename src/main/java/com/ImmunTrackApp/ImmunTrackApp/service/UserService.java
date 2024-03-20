@@ -9,11 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 
 import java.security.Principal;
@@ -87,70 +90,48 @@ public class UserService {
     }
 
     //ADD CHILD
-    public ResponseEntity<Response> addChild(
-            Principal principal,
-            @RequestPart("firstname") String firstname,
-            @RequestPart("lastname") String lastname,
-            @RequestPart("sex") String sex,
-            @RequestPart("mother_name") String mother_name,
-            @RequestPart("mother_id_no") String mother_id_no,
-            @RequestPart("mother_phone_no") String mother_phone_no,
-            @RequestPart("location") String location,
-            @RequestPart("dob") String dob
-    ){
+    public ResponseEntity<Response> addChild(AddChildDto addChildDto){
         Response response = new Response();
-        String userEmail = principal.getName();
-        UserEntity user = (UserEntity) userRepo.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User Email " + userEmail + " nt found"));
 
-        if(childRepo.existsByLastname(lastname)){
+        if (childRepo.existsByLastname(addChildDto.getLastname())){
             response.setSuccess(false);
             response.setMessage("Child already exists");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         ChildEntity child = new ChildEntity();
-        child.setFirstname(firstname);
-        child.setLastname(lastname);
-        child.setSex(sex);
-        child.setMother_name(mother_name);
-        child.setMother_id_no(mother_id_no);
-        child.setMother_phone_no(mother_phone_no);
-        child.setLocation(location);
-        child.setDob(dob);
+        child.setFirstname(addChildDto.getFirstname());
+        child.setLastname(addChildDto.getLastname());
+        child.setSex(addChildDto.getSex());
+        child.setMother_name(addChildDto.getMother_name());
+        child.setMother_id_no(addChildDto.getMother_id_no());
+        child.setMother_phone_no(addChildDto.getMother_phone_no());
+        child.setLocation(addChildDto.getLocation());
+        child.setDob(addChildDto.getDob());
 
         childRepo.save(child);
+
         response.setSuccess(true);
         response.setMessage("Child added successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //ADD VACCINE
-    public ResponseEntity<Response> addVaccine(
-            Principal principal,
-            @RequestPart("vaccineName") String vaccineName,
-            @RequestPart("manufacturer") String manufacturer,
-            @RequestPart("batchNo") String batchNo,
-            @RequestPart("expiryDate") String expiryDate,
-            @RequestPart("quantity") String quantity
-    ){
+    public ResponseEntity<Response> addVaccine(AddVaccine addVaccine){
         Response response = new Response();
-        String userEmail = principal.getName();
-        UserEntity user = (UserEntity) userRepo.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User Email " + userEmail + " nt found"));
 
-        if(vaccineRepo.existsByVaccineName(vaccineName)){
+        if(vaccineRepo.existsByVaccineName(addVaccine.getVaccineName())){
             response.setSuccess(false);
             response.setMessage("vaccine already exists");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         VaccineEntity vaccine = new VaccineEntity();
-        vaccine.setVaccineName(vaccineName);
-        vaccine.setManufacturer(manufacturer);
-        vaccine.setBatchNo(batchNo);
-        vaccine.setExpiryDate(expiryDate);
-        vaccine.setQuantity(quantity);
+        vaccine.setVaccineName(addVaccine.getVaccineName());
+        vaccine.setManufacturer(addVaccine.getManufacturer());
+        vaccine.setBatchNo(addVaccine.getBatchNo());
+        vaccine.setExpiryDate(addVaccine.getExpiryDate());
+        vaccine.setQuantity(addVaccine.getQuantity());
 
         vaccineRepo.save(vaccine);
 
@@ -296,41 +277,45 @@ public class UserService {
     }
 
     // ADD REPORT
-    public ResponseEntity<Response> addReport(
-            Principal principal,
-            @RequestPart("child_name") String child_name,
-            @RequestPart("vaccine_administered") String vaccine_administered,
-            @RequestPart("date_administered") String date_administered,
-            @RequestPart("next_dose_date") String next_dose_date,
-            @RequestPart("remarks") String remarks
-    ){
+    public ResponseEntity<Response> addReport(@RequestBody AddReport addReport) {
         Response response = new Response();
 
-        String username = principal.getName();
+        // Get the authentication object from the SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        UserEntity user = (UserEntity) userRepo.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User email "+ username + "mot found"));
+        // Check if the user is authenticated
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Get the username from the Principal object
+            String username = authentication.getName();
 
-        Reports report = new Reports();
-        report.setChild_name(child_name);
-        report.setVaccine_administered(vaccine_administered);
-        report.setDate_administered(date_administered);
-        report.setNext_dose_date(next_dose_date);
-        report.setUser(user);
-        report.setCompiled_by(user.getLastname());
-        report.setRemarks(remarks);
+            // Find the user by email
+            UserEntity user = (UserEntity) userRepo.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User with email " + username + " not found"));
 
-        reportsRepo.save(report);
+            Reports report = new Reports();
+            report.setChild_name(addReport.getChild_name());
+            report.setVaccine_administered(addReport.getVaccine_administered());
+            report.setDate_administered(addReport.getDate_administered());
+            report.setNext_dose_date(addReport.getNext_dose_date());
+            report.setUser(user);
+            report.setCompiled_by(user.getLastname());
+            report.setRemarks(addReport.getRemarks());
 
-        response.setSuccess(true);
-        response.setMessage("Report added successfully");
-        return new ResponseEntity<>(response, HttpStatus.OK);
+            reportsRepo.save(report);
+
+            response.setSuccess(true);
+            response.setMessage("Report added successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        response.setSuccess(false);
+        response.setMessage("User is not authenticated");
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     // RETURN NUMBER OF Reports
-    public ResponseEntity<Numbers> reportCount() {
+    public ResponseEntity<Numbers> reportCount () {
         Numbers response = new Numbers();
-        if(reportsRepo.findAll().isEmpty()){
+        if (reportsRepo.findAll().isEmpty()) {
             response.setSuccess(String.valueOf(false));
             response.setMessage("No reports found");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -343,7 +328,7 @@ public class UserService {
     }
 
     // User methods to save and revoke all tokens
-    private void saveUserToken(UserEntity user, String jwtToken){
+    private void saveUserToken (UserEntity user, String jwtToken){
         var token = Token.builder()
                 .user(user)
                 .expired(false)
@@ -354,7 +339,7 @@ public class UserService {
         tokenRepo.save(token);
     }
 
-    private void revokeAllUserTokens(UserEntity user) {
+    private void revokeAllUserTokens (UserEntity user){
         var validUserTokens = tokenRepo.findAllValidTokensByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
@@ -364,6 +349,5 @@ public class UserService {
         });
         tokenRepo.saveAll(validUserTokens);
     }
-
 
 }

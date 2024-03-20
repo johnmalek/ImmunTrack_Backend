@@ -19,30 +19,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/add_child")
-    public ResponseEntity<Response> addChild(
-            Principal principal,
-            @RequestPart("firstname") String firstname,
-            @RequestPart("lastname") String lastname,
-            @RequestPart("sex") String sex,
-            @RequestPart("mother_name") String mother_name,
-            @RequestPart("mother_id_no") String mother_id_no,
-            @RequestPart("mother_phone_no") String mother_phone_no,
-            @RequestPart("location") String location,
-            @RequestPart("dob") String dob
-    ){
-        return userService.addChild(principal, firstname, lastname, sex, mother_name, mother_id_no, mother_phone_no, location, dob);
+    public ResponseEntity<Response> addChild(@RequestBody AddChildDto addChildDto){
+        return userService.addChild(addChildDto);
     }
 
     @PostMapping("/add_vaccine")
-    public ResponseEntity<Response> addVaccine(
-            Principal principal,
-            @RequestPart("vaccineName") String vaccineName,
-            @RequestPart("manufacturer") String manufacturer,
-            @RequestPart("batchNo") String batchNo,
-            @RequestPart("expiryDate") String expiryDate,
-            @RequestPart("quantity") String quantity
-    ){
-        return userService.addVaccine(principal, vaccineName, manufacturer, batchNo, expiryDate, quantity);
+    public ResponseEntity<Response> addVaccine(@RequestBody AddVaccine addVaccine){
+        return userService.addVaccine(addVaccine);
     }
 
     @GetMapping("/all_children")
@@ -71,15 +54,8 @@ public class UserController {
     }
 
     @PostMapping("/add_report")
-    public ResponseEntity<Response> addReport(
-            Principal principal,
-            @RequestPart("child_name") String child_name,
-            @RequestPart("vaccine_administered") String vaccine_administered,
-            @RequestPart("date_administered") String date_administered,
-            @RequestPart("next_dose_date") String next_dose_date,
-            @RequestPart("remarks") String remarks,
-            @RequestHeader(name = "Authorization") String token){
-        return userService.addReport(principal, child_name, vaccine_administered, date_administered, next_dose_date, remarks);
+    public ResponseEntity<Response> addReport(@RequestBody AddReport addReport, @RequestHeader(name = "Authorization") String token){
+        return userService.addReport(addReport);
     }
 
     @PutMapping("/update_child_info/{child_id}")
