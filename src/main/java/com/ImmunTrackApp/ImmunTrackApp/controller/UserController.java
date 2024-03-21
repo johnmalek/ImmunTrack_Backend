@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("/add_vaccine")
-    public ResponseEntity<Response> addVaccine(@RequestBody AddVaccine addVaccine){
+    public ResponseEntity<Response> addVaccine(@RequestHeader(name = "Authorization") String token, @RequestBody AddVaccine addVaccine){
         return userService.addVaccine(addVaccine);
     }
 

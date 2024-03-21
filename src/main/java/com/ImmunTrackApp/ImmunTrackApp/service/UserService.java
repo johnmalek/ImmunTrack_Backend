@@ -280,18 +280,16 @@ public class UserService {
     public ResponseEntity<Response> addReport(@RequestBody AddReport addReport) {
         Response response = new Response();
 
-        // Get the authentication object from the SecurityContextHolder
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Check if the user is authenticated
-        if (authentication != null && authentication.isAuthenticated()) {
-            // Get the username from the Principal object
-            String username = authentication.getName();
+        try{
+            // Get the authenticated user's email from the SecurityContextHolder
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName();
 
             // Find the user by email
-            UserEntity user = (UserEntity) userRepo.findByEmail(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User with email " + username + " not found"));
+            UserEntity user = (UserEntity) userRepo.findByEmail(userEmail)
+                    .orElseThrow(() -> new UsernameNotFoundException("User with email " + userEmail + " not found"));
 
+            // Create a new report
             Reports report = new Reports();
             report.setChild_name(addReport.getChild_name());
             report.setVaccine_administered(addReport.getVaccine_administered());
@@ -301,15 +299,19 @@ public class UserService {
             report.setCompiled_by(user.getLastname());
             report.setRemarks(addReport.getRemarks());
 
+            // Save the report
             reportsRepo.save(report);
 
             response.setSuccess(true);
             response.setMessage("Report added successfully");
+
+            // Return a ResponseEntity with HTTP status OK and the response body
             return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch(UsernameNotFoundException e){
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        response.setSuccess(false);
-        response.setMessage("User is not authenticated");
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     // RETURN NUMBER OF Reports
