@@ -200,6 +200,39 @@ public class UserService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+//    DELETE ONE CHILD
+    public ResponseEntity<Response> deleteOneChild(Integer childId){
+        Response response = new Response();
+
+        if(!childRepo.existsById(childId)){
+            response.setSuccess(false);
+            response.setMessage("child does not exist");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        childRepo.deleteById(childId);
+        response.setSuccess(true);
+        response.setMessage("child deleted successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+//    DELETE ONE VACCINE
+    public ResponseEntity<Response> deleteOneVaccine(Integer vaccineId){
+        Response response = new Response();
+
+        if(!vaccineRepo.existsById(vaccineId)){
+            response.setSuccess(false);
+            response.setMessage("vaccine does not exist");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        vaccineRepo.deleteById(vaccineId);
+        response.setSuccess(true);
+        response.setMessage("vaccine deleted successfully");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     //GET ALL VACCINES
     public ResponseEntity<VaccineInfoResponse> getAllVaccines(){
         ArrayList<VaccineEntity> vaccines = new ArrayList<>(vaccineRepo.findAll());

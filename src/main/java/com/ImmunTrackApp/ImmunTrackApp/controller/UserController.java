@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("/add_vaccine")
-    public ResponseEntity<Response> addVaccine(@RequestHeader(name = "Authorization") String token, @RequestBody AddVaccine addVaccine){
+    public ResponseEntity<Response> addVaccine(@RequestBody AddVaccine addVaccine){
         return userService.addVaccine(addVaccine);
     }
 
@@ -48,6 +48,16 @@ public class UserController {
         return userService.vaccineCount();
     }
 
+    @DeleteMapping("/delete_child/{childId}")
+    public ResponseEntity<Response> deleteOneChild(@PathVariable Integer childId){
+        return userService.deleteOneChild(childId);
+    }
+
+    @DeleteMapping("/delete_vaccine/{vaccineId}")
+    public ResponseEntity<Response> deleteOneVaccine(@PathVariable Integer vaccineId){
+        return userService.deleteOneVaccine(vaccineId);
+    }
+
     @GetMapping("/report_count")
     public ResponseEntity<Numbers> reportCount(){
         return userService.reportCount();
@@ -59,12 +69,12 @@ public class UserController {
     }
 
     @PutMapping("/update_child_info/{child_id}")
-    public ResponseEntity<Response> updateChildInfo(@RequestHeader(name = "Authorization") String token, @PathVariable Integer child_id, @RequestBody UpdateChildInfo updateChildInfo){
+    public ResponseEntity<Response> updateChildInfo(@PathVariable Integer child_id, @RequestBody UpdateChildInfo updateChildInfo){
         return userService.updateChildInfo(child_id, updateChildInfo);
     }
 
     @PutMapping("/update_vaccine_info/{vaccine_id}")
-    public ResponseEntity<Response> updateVaccineInfo(@RequestHeader(name = "Authorization") String token, @PathVariable Integer vaccine_id, @RequestBody UpdateVaccineInfo updateVaccineInfo){
+    public ResponseEntity<Response> updateVaccineInfo(@PathVariable Integer vaccine_id, @RequestBody UpdateVaccineInfo updateVaccineInfo){
         return userService.updateVaccineInfo(vaccine_id, updateVaccineInfo);
     }
 }
