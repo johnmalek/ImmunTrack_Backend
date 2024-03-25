@@ -11,8 +11,8 @@ import java.util.ArrayList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChildInfoResponse {
+public class AllChildrenInfoResponse {
     private boolean success;
     private String message;
-    ArrayList<ChildDetails> children;
+    ArrayList<AllChildrenDetails> children;
 }

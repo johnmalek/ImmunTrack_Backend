@@ -4,12 +4,7 @@ import com.ImmunTrackApp.ImmunTrackApp.dto.*;
 import com.ImmunTrackApp.ImmunTrackApp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.time.LocalDate;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/health_care")
@@ -29,8 +24,18 @@ public class UserController {
     }
 
     @GetMapping("/all_children")
-    public ResponseEntity<ChildInfoResponse> getAllChildren(){
+    public ResponseEntity<AllChildrenInfoResponse> getAllChildren(){
         return userService.getAllChildren();
+    }
+
+    @GetMapping("/child/{childId}")
+    public ResponseEntity<OneChildInfoResponse> getChildById(@PathVariable Integer childId){
+        return userService.getChildById(childId);
+    }
+
+    @GetMapping("/vaccine/{vaccineId}")
+    public ResponseEntity<OneVaccineInfoResponse> getVaccineById(@PathVariable Integer vaccineId){
+        return userService.getVaccineById(vaccineId);
     }
 
     @GetMapping("/children_count")

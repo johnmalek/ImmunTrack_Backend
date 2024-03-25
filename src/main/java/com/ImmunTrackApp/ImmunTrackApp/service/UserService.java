@@ -17,11 +17,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
 
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -140,17 +137,66 @@ public class UserService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+//    GET CHILD BY ID
+    public ResponseEntity<OneChildInfoResponse> getChildById(Integer childId) {
+        Optional<ChildEntity> optionalChild = childRepo.findById(childId);
+        OneChildInfoResponse childDetailsResponse = new OneChildInfoResponse();
+
+        if (optionalChild.isPresent()) {
+            ChildEntity child = optionalChild.get();
+            childDetailsResponse.setId(child.getId());
+            childDetailsResponse.setFirstname(child.getFirstname());
+            childDetailsResponse.setLastname(child.getLastname());
+            childDetailsResponse.setSex(child.getSex());
+            childDetailsResponse.setMother_name(child.getMother_name());
+            childDetailsResponse.setMother_id_no(child.getMother_id_no());
+            childDetailsResponse.setMother_phone_no(child.getMother_phone_no());
+            childDetailsResponse.setLocation(child.getLocation());
+            childDetailsResponse.setDob(child.getDob());
+            childDetailsResponse.setSuccess(true);
+            childDetailsResponse.setMessage("Child details fetched successfully");
+            return ResponseEntity.ok().body(childDetailsResponse);
+        } else {
+            childDetailsResponse.setSuccess(false);
+            childDetailsResponse.setMessage("Child with ID " + childId + " not found");
+            return new ResponseEntity<>(childDetailsResponse,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //    GET VACCINE BY ID
+    public ResponseEntity<OneVaccineInfoResponse> getVaccineById(Integer vaccineId) {
+        Optional<VaccineEntity> optionalVaccine = vaccineRepo.findById(vaccineId);
+        OneVaccineInfoResponse response = new OneVaccineInfoResponse();
+
+        if (optionalVaccine.isPresent()) {
+            VaccineEntity vaccine = optionalVaccine.get();
+            response.setId(vaccine.getId());
+            response.setVaccineName(vaccine.getVaccineName());
+            response.setManufacturer(vaccine.getManufacturer());
+            response.setBatchNo(vaccine.getBatchNo());
+            response.setExpiryDate(vaccine.getExpiryDate());
+            response.setQuantity(vaccine.getQuantity());
+            response.setSuccess(true);
+            response.setMessage("Vaccine details fetched successfully");
+            return ResponseEntity.ok().body(response);
+        } else {
+            response.setSuccess(false);
+            response.setMessage("Vaccine with ID " + vaccineId + " not found");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     //GET ALL CHILDREN
-    public ResponseEntity<ChildInfoResponse> getAllChildren(){
+    public ResponseEntity<AllChildrenInfoResponse> getAllChildren(){
         ArrayList<ChildEntity> children = new ArrayList<>(childRepo.findAll());
-        ChildInfoResponse childInfoResponse = new ChildInfoResponse();
-        ArrayList<ChildDetails> childDetails = new ArrayList<>();
+        AllChildrenInfoResponse childInfoResponse = new AllChildrenInfoResponse();
+        ArrayList<AllChildrenDetails> childDetails = new ArrayList<>();
         if(!children.isEmpty()){
             childInfoResponse.setSuccess(true);
             childInfoResponse.setMessage("All Children");
-            ChildDetails childDetail;
+            AllChildrenDetails childDetail;
             for(ChildEntity child: children){
-                childDetail = new ChildDetails();
+                childDetail = new AllChildrenDetails();
                 childDetail.setId(child.getId());
                 childDetail.setFirstname(child.getFirstname());
                 childDetail.setLastname(child.getLastname());

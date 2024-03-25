@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChildDetails {
+public class AllChildrenDetails {
     private Integer id;
     private String firstname;
     private String lastname;
