@@ -15,7 +15,8 @@ public enum Role {
                     Permissions.HEALTHCARE_CREATE,
                     Permissions.HEALTHCARE_READ,
                     Permissions.HEALTHCARE_UPDATE,
-                    Permissions.HEALTHCARE_DELETE
+                    Permissions.HEALTHCARE_DELETE,
+                    Permissions.HEALTHCARE_PATCH
 
             )
     ),
@@ -25,6 +26,8 @@ public enum Role {
                     Permissions.ADMIN_UPDATE,
                     Permissions.ADMIN_CREATE,
                     Permissions.ADMIN_DELETE,
+                    Permissions.ADMIN_PATCH,
+                    Permissions.HEALTHCARE_PATCH,
                     Permissions.HEALTHCARE_CREATE,
                     Permissions.HEALTHCARE_READ,
                     Permissions.HEALTHCARE_UPDATE,
